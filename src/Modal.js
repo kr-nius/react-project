@@ -44,8 +44,21 @@ export default function Modal({ isOpen, onClose, clickDate }) {
   const [place, setPlace] = useState("");
   const [withOption, setWithOption] = useState("가족");
   const [placeOption, setPlaceOption] = useState("집");
+  const [imgUrl, setImgUrl] = useState(noImg);
   // -----------------------------
   const [isEditing, setIsEditing] = useState(true); // 편집 모드 상태
+
+  const imgRef = useRef();
+  const onChangeImage = () => {
+    const reader = new FileReader();
+    const file = imgRef.current.files[0];
+    console.log("file: ", file);
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setImgUrl(reader.result);
+      console.log("image url: ", reader.result);
+    };
+  };
 
   console.log("isopen: ", isOpen);
   console.log("clickDate: ", clickDate);
@@ -71,6 +84,7 @@ export default function Modal({ isOpen, onClose, clickDate }) {
         setPlace("");
         setWithOption("가족");
         setPlaceOption("집");
+        setImgUrl(noImg);
         setIsEditing(true); // 편집 모드로 전환
       }
     }
@@ -84,7 +98,20 @@ export default function Modal({ isOpen, onClose, clickDate }) {
         <h3 className="modalHeader">{clickDate}의 기록</h3>
         <div className="picBox">
           <h4 className="minititle">대표 사진</h4>
-          <ImgChoice />
+          <img
+            src={imgUrl ? imgUrl : noImg}
+            style={{ width: "150px", height: "150px" }}
+          />
+          <label className="titleImgLabel" htmlFor="titleImg">
+            이미지 추가
+          </label>
+          <input
+            type="file"
+            ref={imgRef}
+            accept="image/*"
+            onChange={onChangeImage}
+            id="titleImg"
+          />
         </div>
         <div className="withBox">
           <h4 className="minititle">함께한 사람</h4>
